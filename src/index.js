@@ -5,14 +5,21 @@ const API_URL = "http://localhost:3030/doctors";
 let doctors = [];
 let searchInput;
 
+/**
+ * Calls all functions needed at the start
+ */
 const onInit = () => {
   getDoctors();
-  addAvailabilityIndicator();
+  updateAvailability();
   createSearchInput();
   createListeners();
   insertSearchInput();
 };
 
+/**
+ * Get doctors from API, if availability is given it will add filter to url
+ * @param {*} availability 
+ */
 const getDoctors = (availability = undefined) => {
   const availabilityParam = availability ? `/available${availability}` : "";
   $.ajax({
@@ -25,12 +32,18 @@ const getDoctors = (availability = undefined) => {
   });
 };
 
-const addAvailabilityIndicator = () => {
+/**
+ * Updates all doctor rows with availability from database
+ */
+const updateAvailability = () => {
   doctors.forEach((doctor, _) => {
     updateDoctorRowFromUPIN(doctor);
   });
 };
-
+/**
+ * Creates listener for availability filter, set availability button and search
+ * inputs
+ */
 const createListeners = () => {
   $("#availabilityFilterSelect").on("change", (event) => {
     const filterValue = $(event.currentTarget).val();
@@ -44,7 +57,6 @@ const createListeners = () => {
     })[0];
 
     doctorWithUPIN.available = !doctorWithUPIN.available;
-
     changeDoctorAvailability(doctorWithUPIN);
   });
 
@@ -54,6 +66,10 @@ const createListeners = () => {
   });
 };
 
+/**
+ * Handles value from availability filter
+ * @param {*} value 
+ */
 const handleFilterChange = (value) => {
   doctors.forEach((doctor, _) => {
     let item = getDoctorRowFromUPIN(doctor.upin);
@@ -65,6 +81,10 @@ const handleFilterChange = (value) => {
   });
 };
 
+/**
+ * Updates given doctor in API
+ * @param {*} availability 
+ */
 const changeDoctorAvailability = (doctor) => {
   $.ajax({
     method: "PUT",
@@ -77,6 +97,10 @@ const changeDoctorAvailability = (doctor) => {
   });
 };
 
+/**
+ * Updates row with indicator color and button text
+ * @param {*} doctor 
+ */
 const updateDoctorRowFromUPIN = (doctor) => {
   const doctorRow = getDoctorRowFromUPIN(doctor.upin);
   const buttonText = `Mark as ${doctor.available ? "Una" : "A"}vailable`;
@@ -90,10 +114,17 @@ const updateDoctorRowFromUPIN = (doctor) => {
   }
 };
 
+/**
+ * Returns jQuery object with tr element for given doctor UPIN
+ * @param {*} upin 
+ */
 const getDoctorRowFromUPIN = (upin) => {
   return $(`[data-upin='${upin}']`).first();
 };
 
+/**
+ * Creates html element form search input
+ */
 const createSearchInput = () => {
   searchInput = $("<input/>", {
     type: "text",
@@ -102,10 +133,18 @@ const createSearchInput = () => {
   });
 };
 
+/**
+ * Insert search input into search container
+ */
 const insertSearchInput = () => {
   $("#searchContainer").html(searchInput);
 };
 
+/**
+ * Handles input from search. Checks for every doctor item if it includes
+ * either the name or UPIN.
+ * @param {*} searchInput 
+ */
 const handleSearchInputChange = (searchInput) => {
   doctors.forEach((doctor, _) => {
     const item = getDoctorRowFromUPIN(doctor.upin);
@@ -125,6 +164,9 @@ const handleSearchInputChange = (searchInput) => {
   });
 };
 
+/**
+ * Calls init when document is loaded
+ */
 $(document).ready(() => {
   onInit();
 });
