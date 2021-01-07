@@ -3,11 +3,14 @@ import "./index.css";
 const API_URL = "http://localhost:3030/doctors";
 
 let doctors = [];
+let searchInput;
 
 const onInit = () => {
   getDoctors();
   addAvailabilityIndicator();
+  createSearchInput();
   createListeners();
+  insertSearchInput();
 };
 
 const getDoctors = (availability = undefined) => {
@@ -43,6 +46,11 @@ const createListeners = () => {
     doctorWithUPIN.available = !doctorWithUPIN.available;
 
     changeDoctorAvailability(doctorWithUPIN);
+  });
+
+  searchInput.on("input", (event) => {
+    const searchValue = $(event.currentTarget).val();
+    handleSearchInputChange(searchValue);
   });
 };
 
@@ -84,6 +92,37 @@ const updateDoctorRowFromUPIN = (doctor) => {
 
 const getDoctorRowFromUPIN = (upin) => {
   return $(`[data-upin='${upin}']`).first();
+};
+
+const createSearchInput = () => {
+  searchInput = $("<input/>", {
+    type: "text",
+    id: "searchInput",
+    placeholder: "Filter by UPIN",
+  });
+};
+
+const insertSearchInput = () => {
+  $("#searchContainer").html(searchInput);
+};
+
+const handleSearchInputChange = (searchInput) => {
+  doctors.forEach((doctor, _) => {
+    const item = getDoctorRowFromUPIN(doctor.upin);
+    const input = searchInput.toLowerCase().trim();
+    if (
+      doctor.name.toLowerCase().includes(input) ||
+      (doctor.upin.toString()).includes(input)
+    ) {
+      if (item.hasClass("hidden")) {
+        item.removeClass("hidden");
+      }
+    } else {
+      if (!item.hasClass("hidden")) {
+        item.addClass("hidden");
+      }
+    }
+  });
 };
 
 $(document).ready(() => {
