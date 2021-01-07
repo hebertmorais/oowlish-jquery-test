@@ -7,6 +7,7 @@ let doctors = [];
 const onInit = () => {
   getDoctors();
   addAvailabilityIndicator();
+  createListeners();
 };
 
 const getDoctors = (availability = undefined) => {
@@ -30,6 +31,24 @@ const addAvailabilityIndicator = () => {
     }
   });
 };
+
+const createListeners = () => {
+  $('#availabilityFilterSelect').on('change', event => {
+    const filterValue = $(event.currentTarget).val();
+    handleFilterChange(filterValue);
+  });
+}
+
+const handleFilterChange = (value) => {
+  doctors.forEach((doctor, _) => {
+    let item = $(`[data-upin='${doctor.upin}']`).first();
+    if (value == "available" && !doctor.available) {
+      item.addClass("hidden");
+    } else if (value == "all") {
+      item.removeClass("hidden");
+    }
+  });
+}
 
 $(document).ready(() => {
   onInit();

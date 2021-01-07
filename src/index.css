@@ -15,3 +15,6 @@ tr td:first-child::before {
 .available td:first-child::before {
   background-color: #23cc63;
 }
+.hidden {
+  display: none;
+}
