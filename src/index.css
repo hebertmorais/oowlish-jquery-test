@@ -10,6 +10,7 @@ tr td:first-child::before {
   content: "";
   margin-right: 8px;
   border-radius: 50%;
+  transition: 0.4s;
   background-color: red;
 }
 .available td:first-child::before {
