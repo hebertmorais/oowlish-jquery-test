@@ -3,3 +3,15 @@
   padding-bottom: 7.5rem;
   padding-top: 7.5rem;
 }
+tr td:first-child::before {
+  height: 10px;
+  width: 10px;
+  display: inline-block;
+  content: "";
+  margin-right: 8px;
+  border-radius: 50%;
+  background-color: red;
+}
+.available td:first-child::before {
+  background-color: #23cc63;
+}
